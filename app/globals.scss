@@ -1,0 +1,23 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/Inter-Medium.ttf") format("truetype");
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  direction: ltr;
+  scroll-behavior: smooth;
+}
+body {
+  @apply bg-white text-black;
+  font-family: "Inter";
+}
