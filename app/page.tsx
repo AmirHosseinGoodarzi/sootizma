@@ -1,5 +1,5 @@
 import { UserType } from "@/utils/types";
-import usersList from "../data/users.json";
+import usersList from "../users.json";
 import Link from "next/link";
 
 export default function Home() {

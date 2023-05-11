@@ -2,9 +2,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
+import usersList from "../../users.json";
+import { useRouter } from "next/navigation";
 
 export default function Admin() {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const router = useRouter();
+  const [isAdmin, setIsAdmin] = useState(true);
   const {
     register: loginRegister,
     handleSubmit: loginHandleSubmit,
@@ -13,6 +16,8 @@ export default function Admin() {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm();
 
@@ -29,8 +34,39 @@ export default function Admin() {
       });
     }
   });
-  const submitSooti = handleSubmit((data) => {
-    console.log({ data });
+  const submitSooti = handleSubmit(async (data) => {
+    try {
+      const response = await fetch("/submitNewSooti", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (result.status) {
+        Swal.fire({
+          icon: "success",
+          text: "سوتی مورد نظر با موفقیت ثبت گردید.",
+        });
+        //   allowOutsideClick: false,
+        // }).then(() => {
+        //   router.push("/");
+        // });
+      } else {
+        Swal.fire({
+          icon: "error",
+          text:
+            result.message ?? "خطا در ثبت سوتی جدید. لطفا دوباره امتحان کنید.",
+        });
+      }
+    } catch {
+      Swal.fire({
+        icon: "error",
+        text: "خطا در ثبت سوتی جدید. لطفا دوباره امتحان کنید.",
+      });
+    }
   });
   return (
     <div className="grid place-items-center min-h-screen relative isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
@@ -58,27 +94,54 @@ export default function Admin() {
           </div>
           <div className="mx-auto mt-8 max-w-xl">
             <div className="flex flex-col gap-6">
-              <div className="w-full md:w-1/2">
-                <label className="input_label">سوتی دهنده</label>
-                <div className="mt-2.5">
-                  <select
-                    {...register("user", { required: true })}
-                    className="input_text"
-                  >
-                    <option value="">-------</option>
-                    <option>کاربر تستی</option>
-                    <option>کاربر تستی</option>
-                    <option>کاربر تستی</option>
-                    <option>کاربر تستی</option>
-                    <option>کاربر تستی</option>
-                  </select>
+              {watch("user") === "newUser" ? (
+                <div className="w-full">
+                  <label className="input_label">سوتی دهنده</label>
+                  <div className="flex gap-4 mt-2.5">
+                    <input
+                      {...register("newUser", { required: true })}
+                      className="input_text"
+                    />
+                    <button
+                      className="button !w-fit whitespace-nowrap"
+                      onClick={() => {
+                        setValue("user", "");
+                      }}
+                    >
+                      &larr; بازگشت به لیست کاربران
+                    </button>
+                  </div>
+                  {errors.newUser && (
+                    <p className="error_message">
+                      نام سوتی دهنده جدید نمیتواند خالی باشد
+                    </p>
+                  )}
                 </div>
-                {errors.user && (
-                  <p className="error_message">
-                    کاربر سوتی دهنده را انتخاب کنید
-                  </p>
-                )}
-              </div>
+              ) : (
+                <div className="w-full md:w-1/2">
+                  <label className="input_label">سوتی دهنده</label>
+                  <div className="mt-2.5">
+                    <select
+                      {...register("user", { required: true })}
+                      className="input_text"
+                    >
+                      <option value="">-------</option>
+                      <option value="newUser">افزودن کاربر جدید +</option>
+                      {usersList.map((user) => (
+                        <option value={user.id} key={user.id}>
+                          {user.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {errors.user && (
+                    <p className="error_message">
+                      کاربر سوتی دهنده را انتخاب کنید
+                    </p>
+                  )}
+                </div>
+              )}
+
               <div className="w-full">
                 <label className="input_label">متن سوتی</label>
                 <div className="mt-2.5">
