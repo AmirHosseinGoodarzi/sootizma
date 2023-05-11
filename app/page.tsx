@@ -5,6 +5,10 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="bg-white p-10">
+      <p className="absolute top-5 left-5">
+        Made with <span className="text-red-500 text-2xl">&hearts;</span> by
+        Amirhossein and Farhang
+      </p>
       <div className="relative isolate pt-56">
         <div
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
@@ -33,26 +37,38 @@ export default function Home() {
             role="list"
             className="grid gap-8 grid-cols-1 sm:grid-cols-3 md:grdi-cols-4 lg:grid-cols-5 xl:grid-cols-6"
           >
-            {usersList.map((user: UserType) => (
-              <li
-                key={user.id}
-                className="p-5 rounded-md bg-gray-100 shadow-md transition-all cursor-pointer hover:shadow-lg"
-              >
-                <Link href={`/view/${user.id}`}>
-                  <div className="flex items-center gap-x-6">
-                    <img src="/user.svg" alt="user" className="w-12 h-12" />
-                    <div>
-                      <h3 className="text-base font-semibold leading-7 tracking-tight text-gray-900">
-                        {user.name}
-                      </h3>
-                      <p className="text-sm font-semibold leading-6 text-indigo-600">
-                        {user.sootiesCount}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              </li>
-            ))}
+            {usersList
+              .sort((a, b) => (a.sootiesCount < b.sootiesCount ? 1 : -1))
+              .map((user: UserType, index) => {
+                const icon =
+                  index === 0
+                    ? "/first.svg"
+                    : index === 1
+                    ? "/second.svg"
+                    : index === 2
+                    ? "/third.svg"
+                    : "/user.svg";
+                return (
+                  <li
+                    key={user.id}
+                    className="p-5 rounded-md bg-gray-100 shadow-md transition-all cursor-pointer hover:shadow-lg"
+                  >
+                    <Link href={`/view/${user.id}`}>
+                      <div className="flex items-center gap-x-6">
+                        <img src={icon} alt="user" className="w-12 h-12" />
+                        <div>
+                          <h3 className="text-base font-semibold leading-7 tracking-tight text-gray-900">
+                            {user.name}
+                          </h3>
+                          <p className="text-sm font-semibold leading-6 text-indigo-600">
+                            {user.sootiesCount}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  </li>
+                );
+              })}
           </ul>
         </div>
       </div>
