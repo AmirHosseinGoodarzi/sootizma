@@ -1,13 +1,14 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
-import usersList from "../../users.json";
+import usersList from "../../data/users.json";
 import { useRouter } from "next/navigation";
 
 export default function Admin() {
   const router = useRouter();
   const [isAdmin, setIsAdmin] = useState(true);
+  const [loading, setLoading] = useState(false);
   const {
     register: loginRegister,
     handleSubmit: loginHandleSubmit,
@@ -27,6 +28,7 @@ export default function Admin() {
       data.password.toLowerCase() === "kahkeshan@1234"
     ) {
       setIsAdmin(true);
+      localStorage.setItem("sootAdmin", "true");
     } else {
       Swal.fire({
         icon: "error",
@@ -35,6 +37,7 @@ export default function Admin() {
     }
   });
   const submitSooti = handleSubmit(async (data) => {
+    setLoading(true);
     try {
       const response = await fetch("/submitNewSooti", {
         method: "POST",
@@ -49,11 +52,10 @@ export default function Admin() {
         Swal.fire({
           icon: "success",
           text: "سوتی مورد نظر با موفقیت ثبت گردید.",
+          allowOutsideClick: false,
+        }).then(() => {
+          router.push("/");
         });
-        //   allowOutsideClick: false,
-        // }).then(() => {
-        //   router.push("/");
-        // });
       } else {
         Swal.fire({
           icon: "error",
@@ -66,8 +68,17 @@ export default function Admin() {
         icon: "error",
         text: "خطا در ثبت سوتی جدید. لطفا دوباره امتحان کنید.",
       });
+    } finally {
+      setLoading(false);
     }
   });
+  useEffect(() => {
+    const sootAdmin = localStorage.getItem("sootAdmin");
+    if (sootAdmin && sootAdmin === "true") {
+      setIsAdmin(true);
+    }
+  }, []);
+
   return (
     <div className="grid place-items-center min-h-screen relative isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
       <div
@@ -82,6 +93,11 @@ export default function Admin() {
           }}
         />
       </div>
+      {loading && (
+        <div className="flex items-center justify-center fixed w-full h-full bg-black bg-opacity-80 z-20">
+          <h1 className="text-white text-4xl">در حال بارگذاری اطلاعات ...</h1>
+        </div>
+      )}
       {isAdmin ? (
         <div className="w-full">
           <div className="mx-auto max-w-2xl text-center">

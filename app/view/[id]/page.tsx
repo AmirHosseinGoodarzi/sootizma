@@ -1,6 +1,6 @@
 "use client";
-import usersList from "../../../users.json";
-import sootiesData from "../../../sooties.json";
+import usersList from "../../../data/users.json";
+import sootiesData from "../../../data/sooties.json";
 import { SootiType, UserType } from "@/utils/types";
 import { useRouter } from "next/navigation";
 

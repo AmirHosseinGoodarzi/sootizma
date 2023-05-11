@@ -1,8 +1,8 @@
 import { SootiType, UserType } from "@/utils/types";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 } from "uuid";
-import usersList from "../../users.json";
-import sootiesList from "../../sooties.json";
+import usersList from "../../data/users.json";
+import sootiesList from "../../data/sooties.json";
 import fs from "fs";
 
 export async function POST(request: NextRequest) {
@@ -51,15 +51,15 @@ export async function POST(request: NextRequest) {
         if (p.id === user) {
           p.sootiesCount += 1;
         }
-        return user;
+        return p;
       });
       newSootiesList = {
         ...allPrevSooties,
         [user]: [...allPrevSooties[user], newSooti],
       };
     }
-    fs.writeFileSync("/users.json", JSON.stringify(newUsersList));
-    fs.writeFileSync("/sooties.json", JSON.stringify(newSootiesList));
+    fs.writeFileSync("data/users.json", JSON.stringify(newUsersList));
+    fs.writeFileSync("data/sooties.json", JSON.stringify(newSootiesList));
     return NextResponse.json({
       status: true,
     });
