@@ -4,9 +4,9 @@ import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import usersList from "../../data/users.json";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Admin() {
-  const router = useRouter();
   const [isAdmin, setIsAdmin] = useState(true);
   const [loading, setLoading] = useState(false);
   const {
@@ -19,6 +19,7 @@ export default function Admin() {
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -53,9 +54,8 @@ export default function Admin() {
           icon: "success",
           text: "سوتی مورد نظر با موفقیت ثبت گردید.",
           allowOutsideClick: false,
-        }).then(() => {
-          router.push("/");
         });
+        reset();
       } else {
         Swal.fire({
           icon: "error",
@@ -98,6 +98,9 @@ export default function Admin() {
           <h1 className="text-white text-4xl">در حال بارگذاری اطلاعات ...</h1>
         </div>
       )}
+      <Link href="/" className="button absolute top-5 left-5 !w-fit">
+        بازگشت به خانه
+      </Link>
       {isAdmin ? (
         <div className="w-full">
           <div className="mx-auto max-w-2xl text-center">
